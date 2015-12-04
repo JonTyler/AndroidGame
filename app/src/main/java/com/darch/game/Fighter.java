@@ -10,6 +10,9 @@ import java.util.Random;
  */
 public class Fighter extends Enemy implements UpdateInterface, BehaviourInterface, DrawableInterface {
 
+    private int targetX;
+    private int targetY;
+
     public Fighter(int startX, int startY, Player player, Bitmap spritesheet, GamePanel gamePanel) {
         GetPlayer(player);
     }
@@ -17,7 +20,8 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
     @Override
     public void GetPlayer(Player player) {
         //this guy fires boolets at players
-
+        targetX = player.getX();
+        targetY = player.getY();
     }
 
 
@@ -25,6 +29,7 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
     @Override
     public void Update() {
         //this guy will bounce from side to side
+
     }
 
     @Override

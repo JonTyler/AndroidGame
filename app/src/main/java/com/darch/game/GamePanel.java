@@ -24,13 +24,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public static final int HEIGHT = 1024;
     public static final int MOVESPEED = -5;
     private long smokeStartTime;
-    private long missileStartTime;
+    private long asteroidStartTime;
     private MainThread thread;
     private Background bg;
     private Player player;
     private ArrayList<Smokepuff> smoke;
     private Smokepuff  smokePuff;
-    private ArrayList<Missile> missiles;
+    private ArrayList<Asteroid> asteroids;
     private Random rand = new Random();
     private boolean newGameCreated;
 
@@ -91,9 +91,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.full_back_ground));
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.ship1), 128, 128, 64);
         smoke = new ArrayList<Smokepuff>();
-        missiles = new ArrayList<Missile>();
+        asteroids = new ArrayList<Asteroid>();
         smokeStartTime = System.nanoTime();
-        missileStartTime = System.nanoTime();
+        asteroidStartTime = System.nanoTime();
 
         thread = new MainThread(getHolder(), this);
         //we can safely start the game loop
@@ -129,12 +129,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
-        if (lastYAxis<=dpHeight/2) {
+        if (lastYAxis<=player.getY()) {
             player.setUp(false);
             Log.d("onTouch", "Down");
         }
 
-        if (lastYAxis>=dpHeight/2) {
+        if (lastYAxis>=player.getY()) {
             player.setUp(true);
             Log.d("onTouch", "Up");
             return true;
@@ -163,42 +163,42 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 Log.d("onTouch", "Border");
             }
 
-            //add missiles on timer
-            long missileElapsed = (System.nanoTime()-missileStartTime)/1000000;
-            if(missileElapsed > 2000){
+            //add asteroids on timer
+            long asteroidElapsed = (System.nanoTime()-asteroidStartTime)/1000000;
+            if(asteroidElapsed > 2000){
 
-                //first missile always goes down the middle
-                if(missiles.size()==0)
+                //first Asteroid always goes down the middle
+                if(asteroids.size()==0)
                 {
-                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.strip_saucer_blades)
-                            ,WIDTH + 10, HEIGHT/2, 128, 128, player.getScore(), 16));
+                    asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(),R.drawable.strip_rock_type_a)
+                            ,WIDTH + 10, HEIGHT/2, 64, 64, player.getScore(), 16));
                 }
                 else
                 {
 
-                    missiles.add(new Missile(BitmapFactory.decodeResource(getResources(),R.drawable.strip_saucer_blades),
-                            WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),128,128, player.getScore(),16));
+                    asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(),R.drawable.strip_rock_type_a),
+                            WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),64,64, player.getScore(),16));
                 }
 
                 //reset timer
-                missileStartTime = System.nanoTime();
+                asteroidStartTime = System.nanoTime();
 
             }
-            //loop through every missile and check collision and remove
-            for(int i = 0; i<missiles.size();i++)
+            //loop through every Asteroid and check collision and remove
+            for(int i = 0; i<asteroids.size();i++)
             {
-                //update missile
-                missiles.get(i).Update();
+                //update Asteroid
+                asteroids.get(i).Update();
 
-                if(collision(missiles.get(i),player)) {
-                    missiles.remove(i);
+                if(collision(asteroids.get(i),player)) {
+                    asteroids.remove(i);
                     player.setPlaying(false);
                     break;
                 }
-                //remove missile if it is way off the screen
-                if(missiles.get(i).getX()<-100)
+                //remove Asteroid if it is way off the screen
+                if(asteroids.get(i).getX()<-100)
                 {
-                    missiles.remove(i);
+                    asteroids.remove(i);
                     break;
                 }
             }
@@ -269,7 +269,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 sp.draw(canvas);
             }
 
-            for (Missile m : missiles) {
+            for (Asteroid m : asteroids) {
                 m.Draw(canvas);
             }
             //draw explosion
@@ -285,7 +285,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void newGame()
     {
         dissapear = false;
-        missiles.clear();
+        asteroids.clear();
         smoke.clear();
         player.resetDY();
         player.resetScore();
