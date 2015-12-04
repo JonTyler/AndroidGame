@@ -2,12 +2,15 @@ package com.darch.game;
 
         import android.annotation.SuppressLint;
         import android.content.Context;
+        import android.graphics.Bitmap;
         import android.graphics.BitmapFactory;
         import android.graphics.Canvas;
         import android.graphics.Color;
+        import android.graphics.Matrix;
         import android.graphics.Paint;
         import android.graphics.Rect;
         import android.graphics.Typeface;
+        import android.graphics.drawable.Drawable;
         import android.util.DisplayMetrics;
         import android.util.Log;
         import android.view.MotionEvent;
@@ -170,8 +173,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 //first Asteroid always goes down the middle
                 if(asteroids.size()==0)
                 {
-                    asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(),R.drawable.strip_rock_type_a)
-                            ,WIDTH + 10, HEIGHT/2, 64, 64, player.getScore(), 16));
+                    asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(), R.drawable.strip_rock_type_a)
+                            , WIDTH + 10, HEIGHT / 2, 64, 64, player.getScore(), 16));
+                    rotate(asteroids,90);
                 }
                 else
                 {
@@ -238,6 +242,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 newGame();
             }
         }
+    }
+
+    public void rotate(ArrayList source, float rotation)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotation);
+        //return Bitmap.createBitmap(source,0,0,);
     }
 
     public boolean collision(GameObject a, GameObject b)
