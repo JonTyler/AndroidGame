@@ -12,13 +12,12 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
 
     private int targetX;
     private int targetY;
-    private int startingX;
-    private int startingY;
-
-    public Fighter(int startX, int startY, Player player, Bitmap spritesheet, GamePanel gamePanel) {
+    
+    public Fighter(int startingX, int startingY, Player player, Bitmap spritesheet, GamePanel gamePanel, int HitPoints) {
         GetPlayer(player);
-        startingX = startX;
-        startingY = startY;
+        x = startingX;
+        y = startingY;
+        setHitPoints(HitPoints);
     }
 
     @Override

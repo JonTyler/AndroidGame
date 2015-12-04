@@ -13,14 +13,16 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
     private Animation animation = new Animation();
     private Bitmap spritesheet;
     public int spriteFrame = 0;
+    private boolean isFriendly;
 
-    public Missile(Bitmap res, int x, int y, int w, int h, int s, int numFrames)
+    public Missile(Bitmap res, int x, int y, int w, int h, int s, int numFrames, boolean friendly)
     {
         super.x = x;
         super.y = y;
         score = s;
         height = h;
         width = w;
+        isFriendly = friendly;
 
         speed = 7 + (int) (rand.nextDouble()*score/30);
 
