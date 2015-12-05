@@ -66,7 +66,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         super(context);
 
         gameMusic = MediaPlayer.create(context, R.raw.human_music);
-        expolosionSound = MediaPlayer.create(context, R.raw.);
+        expolosionSound = MediaPlayer.create(context, R.raw.human_music);
         //add the callback to the surfaceholder to intercept events
         getHolder().addCallback(this);
 
