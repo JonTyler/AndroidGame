@@ -19,7 +19,7 @@ public class Player extends GameObject implements UpdateInterface, DrawableInter
     public Player(Bitmap res, int w, int h, int numFrames) {
 
         x = 100;
-        y = (GamePanel.HEIGHT / 2) - 70;
+        y = (GamePanel.HEIGHT / 2)-64;
         dy = 0;
         score = 0;
         height = h;

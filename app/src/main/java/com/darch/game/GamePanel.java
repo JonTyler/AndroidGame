@@ -11,11 +11,14 @@ package com.darch.game;
         import android.graphics.Rect;
         import android.graphics.Typeface;
         import android.graphics.drawable.Drawable;
+        import android.media.MediaPlayer;
+        import android.provider.MediaStore;
         import android.util.DisplayMetrics;
         import android.util.Log;
         import android.view.MotionEvent;
         import android.view.SurfaceHolder;
         import android.view.SurfaceView;
+        import android.app.Activity;
 
         import java.util.ArrayList;
         import java.util.Random;
@@ -36,6 +39,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private ArrayList<Asteroid> asteroids;
     private Random rand = new Random();
     private boolean newGameCreated;
+    private Game game;
 
     float lastXAxis = 0f;
     float lastYAxis = 0f;
@@ -54,11 +58,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private boolean started;
     private int best;
 
+    public MediaPlayer gameMusic;
+    public MediaPlayer expolosionSound;
+
     public GamePanel(Context context)
     {
         super(context);
 
-
+        gameMusic = MediaPlayer.create(context, R.raw.human_music);
+        expolosionSound = MediaPlayer.create(context, R.raw.);
         //add the callback to the surfaceholder to intercept events
         getHolder().addCallback(this);
 
@@ -123,6 +131,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 {
                     player.setPlaying(true);
                     player.spriteFrame = 18;
+                    gameMusic.start();
                 }
                 if(player.getPlaying())
                 {
@@ -197,6 +206,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if(collision(asteroids.get(i),player)) {
                     asteroids.remove(i);
                     player.setPlaying(false);
+                    gameMusic.stop();
+                    gameMusic.reset();
                     break;
                 }
                 //remove Asteroid if it is way off the screen
@@ -301,7 +312,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         player.resetDY();
         player.resetScore();
         player.setY(HEIGHT/2);
-
         if(player.getScore()>best)
         {
             best = player.getScore();

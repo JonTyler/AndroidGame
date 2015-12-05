@@ -18,7 +18,6 @@ public class Game extends Activity {
 
         //set to full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         setContentView(new GamePanel(this));
     }
 
