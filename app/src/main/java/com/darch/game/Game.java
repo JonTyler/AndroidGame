@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.firebase.client.Firebase;
+
 public class Game extends Activity {
 
     @Override
@@ -19,6 +21,8 @@ public class Game extends Activity {
         //set to full screen
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(new GamePanel(this));
+        Firebase.setAndroidContext(this);
+
     }
 
     @Override

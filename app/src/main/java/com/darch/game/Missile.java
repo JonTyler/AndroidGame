@@ -2,20 +2,24 @@ package com.darch.game;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Rect;
+
 import java.util.Random;
 /**
  * Created by Jon on 2015-12-04.
  */
-public class Missile extends GameObject implements UpdateInterface, DrawableInterface{
+public class Missile extends GameObject implements UpdateInterface, DrawableInterface, CollisionInterface{
     private int score;
-    private int speed;
+    protected int speed;
     private Random rand = new Random();
-    private Animation animation = new Animation();
+    protected Animation animation = new Animation();
     private Bitmap spritesheet;
     public int spriteFrame = 0;
-    private boolean isFriendly;
+    protected boolean isFriendly;
+    protected Player player;
 
-    public Missile(Bitmap res, int x, int y, int w, int h, int s, int numFrames, boolean friendly)
+
+    public Missile(Bitmap res, int x, int y, int w, int h, int s, int numFrames, boolean friendly, Player player)
     {
         super.x = x;
         super.y = y;
@@ -41,6 +45,9 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
         animation.setDelay(100-speed);
 
     }
+    public Missile() {
+
+    }
     public void Update()
     {
         x-=speed;
@@ -49,7 +56,7 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
 
     public void Draw(Canvas canvas)
     {
-        canvas.drawBitmap(animation.getImage(),x,y,null);
+        canvas.drawBitmap(animation.getImage(), x, y, null);
     }
 
     @Override
@@ -57,6 +64,15 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
     {
         //offset slightly for more realistic collision detection
         return width;
+    }
+
+    public boolean collision(GameObject a, GameObject b)
+    {
+        if (Rect.intersects(a.getRectangle(), b.getRectangle()))
+        {
+            return true;
+        }
+        return false;
     }
 }
 

@@ -20,7 +20,11 @@ package com.darch.game;
         import android.view.SurfaceView;
         import android.app.Activity;
 
+        import com.firebase.client.Firebase;
+
         import java.util.ArrayList;
+        import java.util.HashMap;
+        import java.util.Map;
         import java.util.Random;
 
 
@@ -31,6 +35,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public static final int MOVESPEED = -5;
     private long smokeStartTime;
     private long asteroidStartTime;
+    private long playerShotStartTime;
     private MainThread thread;
     private Background bg;
     private Player player;
@@ -40,6 +45,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Random rand = new Random();
     private boolean newGameCreated;
     private Game game;
+    private ArrayList<StraightawayBoolet> allStraightBullets;
+    private ArrayList<Enemy> allEnemies;
 
     float lastXAxis = 0f;
     float lastYAxis = 0f;
@@ -105,6 +112,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         asteroids = new ArrayList<Asteroid>();
         smokeStartTime = System.nanoTime();
         asteroidStartTime = System.nanoTime();
+        allStraightBullets = new ArrayList<StraightawayBoolet>();
 
         thread = new MainThread(getHolder(), this);
         //we can safely start the game loop
@@ -165,6 +173,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             bg.update();
             player.Update();
 
+
             if (player.y <= (GamePanel.HEIGHT * (1 / 9))) {
                 player.setY(GamePanel.HEIGHT * (1 / 9));
                 Log.d("onTouch", "Border");
@@ -173,6 +182,27 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             if (player.y >= (GamePanel.HEIGHT) - (GamePanel.HEIGHT / 9)) {
                 player.setY((GamePanel.HEIGHT) - (GamePanel.HEIGHT / 9));
                 Log.d("onTouch", "Border");
+            }
+
+            //player shoots boolets on a timer
+            long shotElapsed = (System.nanoTime()-playerShotStartTime)/1000000;
+            if (shotElapsed > 500)
+            {
+                allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
+                        , player.x, player.y, 64, 64, player.getScore(), 16, true, player));
+
+                playerShotStartTime = System.nanoTime();
+            }
+            //get all straight bullets and remove them if they've gone too far offscreen
+            for (int i=0; i<allStraightBullets.size();i++)
+            {
+                allStraightBullets.get(i).Update();
+
+                if(allStraightBullets.get(i).getX()<-100 || allStraightBullets.get(i).getX()> dpWidth)
+                {
+                    allStraightBullets.remove(i);
+                    break;
+                }
             }
 
             //add asteroids on timer
@@ -252,6 +282,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             if (resetElapsed > 2500 && !newGameCreated) {
                 newGame();
             }
+            Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
+            Map<String, String> highScorePost = new HashMap<String, String>();
+            highScorePost.put("Name", "Testing");
+            String score = Integer.toString(player.getScore());
+            highScorePost.put("High Score", score);
         }
     }
 
