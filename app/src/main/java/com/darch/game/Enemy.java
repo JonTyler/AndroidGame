@@ -16,5 +16,9 @@ public abstract class Enemy extends GameObject{
 
     protected int HitPoints;
     protected Animation animation = new Animation();
+    protected int speed;
+    protected Bitmap spritesheet;
+    public int spriteFrame = 0;
+    protected int score;
 
 }

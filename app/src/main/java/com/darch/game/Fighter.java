@@ -12,12 +12,30 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
 
     private int targetX;
     private int targetY;
+    private Random rand = new Random();
+    private boolean defaultDirection;
     
-    public Fighter(int startingX, int startingY, Player player, Bitmap spritesheet, GamePanel gamePanel, int HitPoints) {
+    public Fighter(Bitmap res, int startingX, int startingY, int w, int h, int s, int numFrames, Player player, int Hitpoints) {
         GetPlayer(player);
         x = startingX;
         y = startingY;
-        setHitPoints(HitPoints);
+        setHitPoints(Hitpoints);
+        height = h;
+        width = w;
+        score = s;
+
+        Bitmap[] image = new Bitmap[numFrames];
+        spritesheet = res;
+
+        for (int i = spriteFrame; i < image.length; i++)
+        {
+            image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
+        }
+
+        animation.setFrames(image);
+        animation.setDelay(100-speed);
+        this.speed = 60;
+        this.defaultDirection = rand.nextBoolean();
     }
 
     @Override
@@ -32,6 +50,21 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
     @Override
     public void Update() {
         //this guy will bounce from side to side
+        if(defaultDirection)
+        {
+            y-=speed;
+        }
+        else{
+            y+=speed;
+        }
+        if(y > GamePanel.HEIGHT)
+        {
+            defaultDirection = true;
+        }
+        if(y < 0)
+        {
+            defaultDirection = false;
+        }
 
     }
 

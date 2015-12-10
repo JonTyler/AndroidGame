@@ -36,6 +36,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private long smokeStartTime;
     private long asteroidStartTime;
     private long playerShotStartTime;
+    private long fighterStartTime;
+    private long fighterFireDelayTime;
     private MainThread thread;
     private Background bg;
     private Player player;
@@ -45,15 +47,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Random rand = new Random();
     private boolean newGameCreated;
     private Game game;
+    private Enemy enemy;
     private ArrayList<StraightawayBoolet> allStraightBullets;
-    private ArrayList<Enemy> allEnemies;
+    private ArrayList<Fighter> fighters;
 
     float lastXAxis = 0f;
     float lastYAxis = 0f;
 
     DisplayMetrics display = getContext().getResources().getDisplayMetrics();
-    float dpHeight = display.heightPixels / display.density;
-    float dpWidth = display.widthPixels / display.density;
+    public float dpHeight = display.heightPixels / display.density;
+    public float dpWidth = display.widthPixels / display.density;
 
     //increase to slow down difficulty progression, decrease to speed up difficulty progression
     private int progressDenom = 20;
@@ -205,6 +208,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
 
+            //add fighters on timer
+            long fighterElapsed = (System.nanoTime()-fighterStartTime)/1000000;
+            if(fighterElapsed > 2000)
+            {
+                //fighters should arbitrarily bounce back and forth
+                fighters.add(new Fighter(BitmapFactory.decodeResource(getResources(), R.drawable.strip_fighter)
+                    , WIDTH - 40, HEIGHT / 2, 64, 64, player.getScore(), 16, player, 2));
+
+                fighterStartTime = System.nanoTime();
+            }
+
             //add asteroids on timer
             long asteroidElapsed = (System.nanoTime()-asteroidStartTime)/1000000;
             if(asteroidElapsed > 2000){
@@ -225,6 +239,44 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                 //reset timer
                 asteroidStartTime = System.nanoTime();
+
+            }
+            //loop through every straightaway boolet and check collision and remove
+            for(int i = 0; i<allStraightBullets.size();i++) {
+                allStraightBullets.get(i).Update();
+                if (collision(allStraightBullets.get(i), player) && !allStraightBullets.get(i).isFriendly) {
+                    allStraightBullets.remove(i);
+                    player.setPlaying(false);
+                    gameMusic.stop();
+                    gameMusic.reset();
+                    break;
+                }
+                for (int j = 0; j < fighters.size(); j++) {
+                    if (collision(allStraightBullets.get(i), fighters.get(j)) && allStraightBullets.get(i).isFriendly) {
+                        allStraightBullets.remove(i);
+                        int fighterHP = fighters.get(j).getHitPoints();
+                        fighters.get(j).setHitPoints(fighterHP - 1);
+                        if (fighters.get(j).getHitPoints() == 0) {
+                            fighters.remove(j);
+                        }
+                    }
+                }
+            }
+            // loop htrough every Fighter and check collision and remove
+            for(int i =0; i<fighters.size();i++)
+            {
+                //update fighters
+                fighters.get(i).Update();
+                //bullet collision already takes care of fighters
+                //they spawn unfriendly bullets instead.
+
+                if(fighterFireDelayTime > 1000)
+                {
+                    allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
+                            , fighters.get(i).getX(), fighters.get(i).getY(), 64, 64, player.getScore(), 16, false, player));
+                }
+
+                fighterFireDelayTime = System.nanoTime();
 
             }
             //loop through every Asteroid and check collision and remove
@@ -328,6 +380,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
             for (Asteroid m : asteroids) {
                 m.Draw(canvas);
+            }
+
+            for(Missile mi : allStraightBullets)
+            {
+                mi.Draw(canvas);
+            }
+            for (Fighter f : fighters)
+            {
+                f.Draw(canvas);
             }
             //draw explosion
             if(started)
