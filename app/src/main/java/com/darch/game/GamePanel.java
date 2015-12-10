@@ -191,8 +191,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             long shotElapsed = (System.nanoTime()-playerShotStartTime)/1000000;
             if (shotElapsed > 500)
             {
-                allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
-                        , player.x, player.y, 64, 64, player.getScore(), 16, true, player));
+                allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.single_frame_bullet)
+                        , player.x, player.y, 32, 32, player.getScore(), 1, true, player));
 
                 playerShotStartTime = System.nanoTime();
             }
@@ -386,10 +386,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             {
                 mi.Draw(canvas);
             }
+
             for (Fighter f : fighters)
             {
                 f.Draw(canvas);
             }
+
             //draw explosion
             if(started)
             {
