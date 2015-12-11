@@ -44,12 +44,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private ArrayList<Smokepuff> smoke;
     private Smokepuff  smokePuff;
     private ArrayList<Asteroid> asteroids;
+    private ArrayList<otherFighter> fighters;
     private Random rand = new Random();
     private boolean newGameCreated;
     private Game game;
     private Enemy enemy;
     private ArrayList<StraightawayBoolet> allStraightBullets;
-    private ArrayList<Fighter> fighters;
 
     float lastXAxis = 0f;
     float lastYAxis = 0f;
@@ -113,6 +113,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.ship1), 128, 128, 64);
         smoke = new ArrayList<Smokepuff>();
         asteroids = new ArrayList<Asteroid>();
+        fighters = new ArrayList<otherFighter>();
+        fighterStartTime = System.nanoTime();
         smokeStartTime = System.nanoTime();
         asteroidStartTime = System.nanoTime();
         allStraightBullets = new ArrayList<StraightawayBoolet>();
@@ -196,6 +198,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                 playerShotStartTime = System.nanoTime();
             }
+
             //get all straight bullets and remove them if they've gone too far offscreen
             for (int i=0; i<allStraightBullets.size();i++)
             {
@@ -210,36 +213,40 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
             //add fighters on timer
             long fighterElapsed = (System.nanoTime()-fighterStartTime)/1000000;
-            if(fighterElapsed > 2000)
-            {
-                //fighters should arbitrarily bounce back and forth
-                fighters.add(new Fighter(BitmapFactory.decodeResource(getResources(), R.drawable.strip_fighter)
-                    , WIDTH - 40, HEIGHT / 2, 64, 64, player.getScore(), 16, player, 2));
+            if(fighterElapsed > 2000){
+                //first fighter always goes down the middle
+                if(fighters.size()==0)
+                {
+                    fighters.add(new otherFighter(BitmapFactory.decodeResource(getResources(), R.drawable.strip_fighter)
+                            , WIDTH + 10, HEIGHT / 2, 128, 128, player.getScore(), 1));
+                }
+                else
+                {
 
+                    fighters.add(new otherFighter(BitmapFactory.decodeResource(getResources(),R.drawable.strip_fighter),
+                            WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),128,128, player.getScore(),1));
+                }
+                //reset timer
                 fighterStartTime = System.nanoTime();
             }
 
             //add asteroids on timer
             long asteroidElapsed = (System.nanoTime()-asteroidStartTime)/1000000;
             if(asteroidElapsed > 2000){
-
                 //first Asteroid always goes down the middle
                 if(asteroids.size()==0)
                 {
                     asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(), R.drawable.strip_rock_type_a)
-                            , WIDTH + 10, HEIGHT / 2, 64, 64, player.getScore(), 16));
+                            , WIDTH + 10, HEIGHT / 2, 64, 64, player.getScore(), 1));
                     rotate(asteroids,90);
                 }
                 else
                 {
-
                     asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(),R.drawable.strip_rock_type_a),
-                            WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),64,64, player.getScore(),16));
+                            WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),64,64, player.getScore(),1));
                 }
-
                 //reset timer
                 asteroidStartTime = System.nanoTime();
-
             }
             //loop through every straightaway boolet and check collision and remove
             for(int i = 0; i<allStraightBullets.size();i++) {
@@ -251,32 +258,31 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     gameMusic.reset();
                     break;
                 }
-                for (int j = 0; j < fighters.size(); j++) {
-                    if (collision(allStraightBullets.get(i), fighters.get(j)) && allStraightBullets.get(i).isFriendly) {
-                        allStraightBullets.remove(i);
-                        int fighterHP = fighters.get(j).getHitPoints();
-                        fighters.get(j).setHitPoints(fighterHP - 1);
-                        if (fighters.get(j).getHitPoints() == 0) {
-                            fighters.remove(j);
-                        }
-                    }
-                }
             }
-            // loop htrough every Fighter and check collision and remove
-            for(int i =0; i<fighters.size();i++)
+
+            // loop through every Fighter and check collision and remove
+            for(int i = 0; i<fighters.size();i++)
             {
                 //update fighters
                 fighters.get(i).Update();
                 //bullet collision already takes care of fighters
                 //they spawn unfriendly bullets instead.
 
-                if(fighterFireDelayTime > 1000)
+                long fighterBulletElapsed = (System.nanoTime()-fighterFireDelayTime)/1000000;
+                if(fighterBulletElapsed > 500)
                 {
                     allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
-                            , fighters.get(i).getX(), fighters.get(i).getY(), 64, 64, player.getScore(), 16, false, player));
+                            , fighters.get(i).getX(), fighters.get(i).getY(), 32, 32, player.getScore(), 1, false, player));
+                    fighterFireDelayTime = System.nanoTime();
                 }
-
-                fighterFireDelayTime = System.nanoTime();
+                //if (collision(allStraightBullets.get(i), fighters.get(i)) && allStraightBullets.get(i).isFriendly) {
+                //    allStraightBullets.remove(i);
+                    // int fighterHP = fighters.get(j).getHitPoints();
+                    // fighters.get(j).setHitPoints(fighterHP - 1);
+                    //if (fighters.get(j).getHitPoints() == 0) {
+                //    fighters.remove(i);
+                    // }
+                //}
 
             }
             //loop through every Asteroid and check collision and remove
@@ -300,7 +306,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 }
             }
 
-            //add smoke puffs on timer
+           //add smoke puffs on timer
             long elapsed = (System.nanoTime() - smokeStartTime)/1000000;
             if(elapsed > 120){
                 smoke.add(new Smokepuff(player.getX(), player.getY()+10));
@@ -387,7 +393,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 mi.Draw(canvas);
             }
 
-            for (Fighter f : fighters)
+            for (otherFighter f : fighters)
             {
                 f.Draw(canvas);
             }
@@ -407,6 +413,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         dissapear = false;
         asteroids.clear();
         smoke.clear();
+        fighters.clear();
+        allStraightBullets.clear();
         player.resetDY();
         player.resetScore();
         player.setY(HEIGHT/2);

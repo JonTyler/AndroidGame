@@ -14,7 +14,7 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
     private int targetY;
     private Random rand = new Random();
     private boolean defaultDirection;
-    
+
     public Fighter(Bitmap res, int startingX, int startingY, int w, int h, int s, int numFrames, Player player, int Hitpoints) {
         GetPlayer(player);
         x = startingX;
