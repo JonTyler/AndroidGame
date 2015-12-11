@@ -186,7 +186,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         String score = Integer.toString(player.getScore());
         highScorePost.put("High Score", score);
         playerRef.push().setValue(highScorePost);
-        //best = Highscore;
+        Highscore = score;
+        getFireBaseHighScore();
     }
     public void getFireBaseHighScore()
     {
