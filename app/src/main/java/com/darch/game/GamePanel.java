@@ -273,7 +273,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 {
                     allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
                             , fighters.get(i).getX(), fighters.get(i).getY(), 32, 32, player.getScore(), 1, false, player));
-                    fighterFireDelayTime = System.nanoTime();
+
                 }
                 //if (collision(allStraightBullets.get(i), fighters.get(i)) && allStraightBullets.get(i).isFriendly) {
                 //    allStraightBullets.remove(i);
@@ -283,7 +283,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 //    fighters.remove(i);
                     // }
                 //}
-
+                fighterFireDelayTime = System.nanoTime();
             }
             //loop through every Asteroid and check collision and remove
             for(int i = 0; i<asteroids.size();i++)
