@@ -172,6 +172,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         return super.onTouchEvent(event);
     }
 
+    public void addScoreToFireBase()
+    {
+        Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
+        Map<String, String> highScorePost = new HashMap<String, String>();
+        highScorePost.put("Name", "Testing");
+        String score = Integer.toString(player.getScore());
+        highScorePost.put("High Score", score);
+        joryRef.push().setValue(highScorePost);
+    }
     public void update()
     {
         if(player.getPlaying()) {
@@ -256,6 +265,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     player.setPlaying(false);
                     gameMusic.stop();
                     gameMusic.reset();
+                    addScoreToFireBase();
                     break;
                 }
             }
@@ -304,6 +314,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     player.setPlaying(false);
                     gameMusic.stop();
                     gameMusic.reset();
+                    addScoreToFireBase();
                     break;
                 }
                 //remove Asteroid if it is way off the screen
@@ -348,11 +359,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             if (resetElapsed > 2500 && !newGameCreated) {
                 newGame();
             }
-            Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
-            Map<String, String> highScorePost = new HashMap<String, String>();
-            highScorePost.put("Name", "Testing");
-            String score = Integer.toString(player.getScore());
-            highScorePost.put("High Score", score);
+
         }
     }
 
