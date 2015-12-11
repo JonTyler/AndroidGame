@@ -191,7 +191,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void getFireBaseHighScore()
     {
         Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
-        Query joryQueer = joryRef.orderByChild("High Score").limitToFirst(1);
+        Query joryQueer = joryRef.orderByChild("High Score").limitToLast(1);
         joryQueer.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
