@@ -74,5 +74,12 @@ public class Player extends GameObject implements UpdateInterface, DrawableInter
     public void setPlaying(boolean b){playing = b;}
     public void resetDY(){dy = 0;}
     public void resetScore(){score = 0;}
+    @Override
+    public int getWidth()
+    {
+        //offset slightly for more realistic collision detection
+        x=width-20;
+        return width;
+    }
 }
 

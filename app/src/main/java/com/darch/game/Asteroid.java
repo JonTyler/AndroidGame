@@ -59,6 +59,7 @@ public class Asteroid extends GameObject implements DrawableInterface, UpdateInt
     public int getWidth()
     {
         //offset slightly for more realistic collision detection
+        x=width-20;
         return width;
     }
 }
