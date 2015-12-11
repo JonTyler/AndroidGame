@@ -259,6 +259,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     break;
                 }
             }
+            long fighterBulletElapsed = (System.nanoTime()-fighterFireDelayTime)/1000000;
 
             // loop through every Fighter and check collision and remove
             for(int i = 0; i<fighters.size();i++)
@@ -268,7 +269,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 //bullet collision already takes care of fighters
                 //they spawn unfriendly bullets instead.
 
-                long fighterBulletElapsed = (System.nanoTime()-fighterFireDelayTime)/1000000;
+
                 if(fighterBulletElapsed > 500)
                 {
                     allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
@@ -276,10 +277,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
                 }
 
-                if(fighterBulletElapsed > 500)
-                {
-                    fighterFireDelayTime = System.nanoTime();
-                }
+
                 //if (collision(allStraightBullets.get(i), fighters.get(i)) && allStraightBullets.get(i).isFriendly) {
                 //    allStraightBullets.remove(i);
                     // int fighterHP = fighters.get(j).getHitPoints();
@@ -289,6 +287,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     // }
                 //}
 
+            }
+            //this is outside the entire fighter for loop. god help me.
+            if(fighterBulletElapsed > 500)
+            {
+                fighterFireDelayTime = System.nanoTime();
             }
             //loop through every Asteroid and check collision and remove
             for(int i = 0; i<asteroids.size();i++)
