@@ -353,6 +353,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             highScorePost.put("Name", "Testing");
             String score = Integer.toString(player.getScore());
             highScorePost.put("High Score", score);
+            joryRef.push().setValue(highScorePost);
         }
     }
 
