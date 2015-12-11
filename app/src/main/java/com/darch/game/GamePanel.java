@@ -175,11 +175,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void addScoreToFireBase()
     {
         Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
+        Firebase playerRef = joryRef.child("Players");
         Map<String, String> highScorePost = new HashMap<String, String>();
         highScorePost.put("Name", "Testing");
         String score = Integer.toString(player.getScore());
         highScorePost.put("High Score", score);
-        joryRef.push().setValue(highScorePost);
+        playerRef.push().setValue(highScorePost);
     }
     public void update()
     {
