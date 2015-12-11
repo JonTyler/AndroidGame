@@ -20,7 +20,11 @@ package com.darch.game;
         import android.view.SurfaceView;
         import android.app.Activity;
 
+        import com.firebase.client.ChildEventListener;
+        import com.firebase.client.DataSnapshot;
         import com.firebase.client.Firebase;
+        import com.firebase.client.FirebaseError;
+        import com.firebase.client.Query;
 
         import java.util.ArrayList;
         import java.util.HashMap;
@@ -181,6 +185,41 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         String score = Integer.toString(player.getScore());
         highScorePost.put("High Score", score);
         playerRef.push().setValue(highScorePost);
+        best = Integer.parseInt(getFireBaseHighScore());
+
+    }
+    public String getFireBaseHighScore()
+    {
+        final String[] highscore = {""};
+        Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
+        Query joryQueer = joryRef.orderByChild("High Score").limitToFirst(1);
+        joryQueer.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
+                highscore[0] = dataSnapshot.getKey();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+        return highscore[0];
     }
     public void update()
     {
