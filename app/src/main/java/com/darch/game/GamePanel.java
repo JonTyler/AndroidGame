@@ -56,7 +56,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     DisplayMetrics display = getContext().getResources().getDisplayMetrics();
     public float dpHeight = display.heightPixels / display.density;
-    public float dpWidth = display.widthPixels / display.density;
+    public float dpWidth = display.widthPixels;
 
     //increase to slow down difficulty progression, decrease to speed up difficulty progression
     private int progressDenom = 20;
@@ -353,7 +353,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             highScorePost.put("Name", "Testing");
             String score = Integer.toString(player.getScore());
             highScorePost.put("High Score", score);
-            joryRef.push().setValue(highScorePost);
         }
     }
 
