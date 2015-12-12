@@ -485,7 +485,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         paint.setTextSize(WIDTH/90);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         canvas.drawText("DISTANCE: " + (player.getScore()*3), WIDTH*(4/5), HEIGHT - HEIGHT*(9/10), paint);
-        canvas.drawText("BEST: " + Highscore, (WIDTH/2) - (WIDTH/4), HEIGHT/2 /*- HEIGHT*(9/10)*/, paint);
+        canvas.drawText("BEST: " + Highscore, (WIDTH/2) - (WIDTH/10), HEIGHT/2 - HEIGHT*(9/10), paint);
 
         if(!player.getPlaying()&&newGameCreated&&reset)
         {
