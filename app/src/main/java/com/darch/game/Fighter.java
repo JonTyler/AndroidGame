@@ -50,6 +50,7 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
     @Override
     public void Update() {
         //this guy will bounce from side to side
+        x-=40;
         if(defaultDirection)
         {
             y-=speed;
@@ -65,6 +66,7 @@ public class Fighter extends Enemy implements UpdateInterface, BehaviourInterfac
         {
             defaultDirection = false;
         }
+        animation.update();
 
     }
 
