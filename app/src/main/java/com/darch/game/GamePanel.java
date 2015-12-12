@@ -242,7 +242,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             if (shotElapsed > 1000)
             {
                 allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.single_frame_bullet)
-                        , player.x, player.y, 32, 32, player.getScore(), 1, true, player));
+                        , player.x, player.y-16, 32, 32, player.getScore(), 1, true, player));
 
                 playerShotStartTime = System.nanoTime();
             }
@@ -322,7 +322,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if(fighterBulletElapsed > 1000)
                 {
                     allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
-                            , fighters.get(i).getX(), fighters.get(i).getY(), 32, 32, player.getScore(), 1, false, player));
+                            , fighters.get(i).getX(), fighters.get(i).getY()-16, 32, 32, player.getScore(), 1, false, player));
                 }
 
                 for(int j = 0; j<allStraightBullets.size();j++)
