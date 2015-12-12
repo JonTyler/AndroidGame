@@ -116,6 +116,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.full_back_ground));
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.ship1), 128, 128, 64);
+        getFireBaseHighScore();
         smoke = new ArrayList<Smokepuff>();
         asteroids = new ArrayList<Asteroid>();
         fighters = new ArrayList<otherFighter>();
@@ -197,6 +198,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
                 Highscore = String.valueOf(dataSnapshot.getValue());
+                Highscore = Highscore.substring(26, Highscore.length()-1);
             }
 
             @Override
@@ -242,7 +244,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             if (shotElapsed > 1000)
             {
                 allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.single_frame_bullet)
-                        , player.x+64, player.y+64, 32, 32, player.getScore(), 1, true, player));
+                        , player.getX()+(player.width/2)+16, player.getY()+(player.height/2)-16, 32, 32, player.getScore(), 1, true, player));
 
                 playerShotStartTime = System.nanoTime();
             }
@@ -485,7 +487,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         paint.setTextSize(WIDTH/90);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         canvas.drawText("DISTANCE: " + (player.getScore()*3), WIDTH*(4/5), HEIGHT - HEIGHT*(9/10), paint);
-        canvas.drawText("BEST: " + Highscore, (WIDTH/2) - (WIDTH/10), HEIGHT/2 - HEIGHT*(9/10), paint);
+        canvas.drawText("BEST: " + Highscore, (WIDTH/2) - (WIDTH/10), HEIGHT - HEIGHT*(9/10), paint);
 
         if(!player.getPlaying()&&newGameCreated&&reset)
         {
