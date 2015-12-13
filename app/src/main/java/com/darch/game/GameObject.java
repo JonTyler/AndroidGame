@@ -13,7 +13,6 @@ public abstract class GameObject {
     protected int width;
     protected int height;
 
-
     public void setX(int x)
     {
         this.x = x;

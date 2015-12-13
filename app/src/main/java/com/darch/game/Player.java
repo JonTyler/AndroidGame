@@ -81,5 +81,12 @@ public class Player extends GameObject implements UpdateInterface, DrawableInter
         x=width-20;
         return width;
     }
+    @Override
+    public int getHeight()
+    {
+        //offset slightly for more realistic collision detection
+        y=height-20;
+        return height;
+    }
 }
 

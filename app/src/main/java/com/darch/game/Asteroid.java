@@ -52,7 +52,7 @@ public class Asteroid extends GameObject implements DrawableInterface, UpdateInt
 
     public void Draw(Canvas canvas)
     {
-        canvas.drawBitmap(animation.getImage(),x,y,null);
+        canvas.drawBitmap(animation.getImage(), x, y, null);
     }
 
     @Override
@@ -61,5 +61,12 @@ public class Asteroid extends GameObject implements DrawableInterface, UpdateInt
         //offset slightly for more realistic collision detection
         x=width-20;
         return width;
+    }
+    @Override
+    public int getHeight()
+    {
+        //offset slightly for more realistic collision detection
+        y=height-20;
+        return height;
     }
 }

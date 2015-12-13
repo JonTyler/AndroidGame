@@ -50,7 +50,7 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
     }
     public void Update()
     {
-        x-=speed;
+        x+=speed;
         animation.update();
     }
 
@@ -63,7 +63,16 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
     public int getWidth()
     {
         //offset slightly for more realistic collision detection
+        x=width-10;
         return width;
+    }
+
+    @Override
+    public int getHeight()
+    {
+        //offset slightly for more realistic collision detection
+        y=height-10;
+        return height;
     }
 
     public boolean collision(GameObject a, GameObject b)

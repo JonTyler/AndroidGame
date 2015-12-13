@@ -56,6 +56,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Enemy enemy;
     private ArrayList<StraightawayBoolet> allStraightBullets;
     private String Highscore;
+
     float lastXAxis = 0f;
     float lastYAxis = 0f;
 
@@ -65,13 +66,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     //increase to slow down difficulty progression, decrease to speed up difficulty progression
     private int progressDenom = 20;
+    private long shotElapsed;
 
     private Explosion explosion;
     private long startReset;
     private boolean reset;
     private boolean dissapear;
     private boolean started;
-    private String best;
+
+    private String previousScore;
+    private String currentScore;
 
     public MediaPlayer gameMusic;
     public MediaPlayer expolosionSound;
@@ -81,10 +85,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         super(context);
 
         gameMusic = MediaPlayer.create(context, R.raw.human_music);
-        expolosionSound = MediaPlayer.create(context, R.raw.human_music);
+        expolosionSound = MediaPlayer.create(context, R.raw.explosion_5);
         //add the callback to the surfaceholder to intercept events
         getHolder().addCallback(this);
-        //thread = new MainThread(getHolder(), this);
+        thread = new MainThread(getHolder(), this);
 
         //make gamePanel focusable so it can handle events
         setFocusable(true);
@@ -105,6 +109,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 thread.join();
                 retry = false;
                 thread = null;
+                gameMusic.pause();
 
             }catch(InterruptedException e){e.printStackTrace();}
         }
@@ -124,6 +129,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         smokeStartTime = System.nanoTime();
         asteroidStartTime = System.nanoTime();
         allStraightBullets = new ArrayList<StraightawayBoolet>();
+        previousScore = "0";
+        currentScore = "0";
 
         thread = new MainThread(getHolder(), this);
         //we can safely start the game loop
@@ -150,6 +157,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 {
                     player.setPlaying(true);
                     player.spriteFrame = 18;
+                    gameMusic = MediaPlayer.create(this.getContext(), R.raw.human_music);
+                    gameMusic.setLooping(true);
                     gameMusic.start();
                 }
                 if(player.getPlaying())
@@ -174,6 +183,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         if (event.getAction() == MotionEvent.ACTION_CANCEL) {
             Log.d("onTouch", "MotionEvent.ACTION_CANCEL");
         }
+        if (lastXAxis >= dpWidth / 3)
+        {
+            if (shotElapsed > 500)
+            {
+                allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.single_frame_bullet)
+                        , player.getX()+(player.width/2)+16, player.getY()+(player.height/2)-16, 32, 32, player.getScore(), 1, true, player));
+
+                playerShotStartTime = System.nanoTime();
+            }
+        }
         //return false;
         return super.onTouchEvent(event);
     }
@@ -187,7 +206,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         String score = Integer.toString(player.getScore());
         highScorePost.put("High Score", score);
         playerRef.push().setValue(highScorePost);
-        Highscore = score;
+        previousScore = score;
+        if(Integer.parseInt(previousScore)>Integer.parseInt(currentScore))
+        {
+            currentScore = previousScore;
+        }
+        previousScore = score;
         getFireBaseHighScore();
     }
     public void getFireBaseHighScore()
@@ -228,7 +252,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             bg.update();
             player.Update();
 
-
             if (player.y <= (GamePanel.HEIGHT * (1 / 9))) {
                 player.setY(GamePanel.HEIGHT * (1 / 9));
                 Log.d("onTouch", "Border");
@@ -240,14 +263,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             }
 
             //player shoots boolets on a timer
-            long shotElapsed = (System.nanoTime()-playerShotStartTime)/1000000;
-            if (shotElapsed > 1000)
-            {
-                allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.single_frame_bullet)
-                        , player.getX()+(player.width/2)+16, player.getY()+(player.height/2)-16, 32, 32, player.getScore(), 1, true, player));
-
-                playerShotStartTime = System.nanoTime();
-            }
+            shotElapsed = (System.nanoTime()-playerShotStartTime)/1000000;
 
             //get all straight bullets and remove them if they've gone too far offscreen
             for (int i=0; i<allStraightBullets.size();i++)
@@ -263,19 +279,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
             //add fighters on timer
             long fighterElapsed = (System.nanoTime()-fighterStartTime)/1000000;
-            if(fighterElapsed > 2000){
-                //first fighter always goes down the middle
-                if(fighters.size()==0)
-                {
-                    fighters.add(new otherFighter(BitmapFactory.decodeResource(getResources(), R.drawable.strip_fighter)
-                            , WIDTH + 10, HEIGHT / 2, 128, 128, player.getScore(), 1));
-                }
-                else
-                {
-
-                    fighters.add(new otherFighter(BitmapFactory.decodeResource(getResources(),R.drawable.strip_fighter),
+            if(fighterElapsed > 2000)
+            {
+                fighters.add(new otherFighter(BitmapFactory.decodeResource(getResources(),R.drawable.strip_fighter),
                             WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),128,128, player.getScore(),1));
-                }
                 //reset timer
                 fighterStartTime = System.nanoTime();
             }
@@ -304,7 +311,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if (collision(allStraightBullets.get(i), player) && !allStraightBullets.get(i).isFriendly) {
                     allStraightBullets.remove(i);
                     player.setPlaying(false);
-                    gameMusic.stop();
+                    expolosionSound.reset();
+                    expolosionSound = MediaPlayer.create(this.getContext(), R.raw.explosion_4);
+                    expolosionSound.start();
                     gameMusic.reset();
                     addScoreToFireBase();
                     break;
@@ -319,30 +328,28 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 fighters.get(i).Update();
                 //bullet collision already takes care of fighters
                 //they spawn unfriendly bullets instead.
-
-
-                if(fighterBulletElapsed > 1000)
+                if(fighterBulletElapsed > 1500)
                 {
                     allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
-                            , fighters.get(i).getX(), fighters.get(i).getY()-16, 32, 32, player.getScore(), 1, false, player));
+                            , fighters.get(i).getX()-64+16, fighters.get(i).getY()-16+64, 32, 32, player.getScore(), 1, false, player));
                 }
 
                 for(int j = 0; j<allStraightBullets.size();j++)
                 {
                     if (collision(allStraightBullets.get(j), fighters.get(i)) && allStraightBullets.get(j).isFriendly) {
-                        //allStraightBullets.remove(i);
+                        allStraightBullets.remove(j);
                         explosion = new Explosion(BitmapFactory.decodeResource(getResources(), R.drawable.exp_type_a), fighters.get(i).getX() -64,
                                 fighters.get(i).getY() - 64, 128, 128, 40);
+                        expolosionSound.reset();
+                        expolosionSound = MediaPlayer.create(this.getContext(), R.raw.explosion_5);
+                        expolosionSound.start();
                         fighters.remove(i);
                     }
                     explosion.Update();
                 }
-
-
-
             }
             //this is outside the entire fighter for loop. god help me.
-            if(fighterBulletElapsed > 1000)
+            if(fighterBulletElapsed > 1500)
             {
                 fighterFireDelayTime = System.nanoTime();
             }
@@ -353,10 +360,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 asteroids.get(i).Update();
 
                 if(collision(asteroids.get(i),player)) {
-                    asteroids.remove(i);
                     player.setPlaying(false);
-                    gameMusic.stop();
                     gameMusic.reset();
+                    expolosionSound.reset();
+                    expolosionSound = MediaPlayer.create(this.getContext(), R.raw.explosion_5);
+                    expolosionSound.start();
                     addScoreToFireBase();
                     break;
                 }
@@ -469,7 +477,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void newGame()
     {
         dissapear = false;
-        //best = Highscore;
         asteroids.clear();
         smoke.clear();
         fighters.clear();
@@ -484,26 +491,36 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     {
         Paint paint = new Paint();
         paint.setColor(Color.RED);
-        paint.setTextSize(WIDTH/90);
+        paint.setTextSize(WIDTH / 90);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("DISTANCE: " + (player.getScore()*3), WIDTH*(4/5), HEIGHT - HEIGHT*(9/10), paint);
-        canvas.drawText("BEST: " + Highscore, (WIDTH/2) - (WIDTH/10), HEIGHT - HEIGHT*(9/10), paint);
+        canvas.drawText("Distance: " + (player.getScore()), WIDTH * (4 / 5), HEIGHT - HEIGHT * (9/10), paint);
+        canvas.drawText("Beat It!: " + Highscore, (WIDTH/2) - (WIDTH/10), HEIGHT - HEIGHT*(9/10), paint);
 
-        if(!player.getPlaying()&&newGameCreated&&reset)
-        {
+        canvas.drawText("Previous Run: " + previousScore, (WIDTH/4) - (WIDTH/9), HEIGHT - HEIGHT*(9/10), paint);
+        canvas.drawText("Current Best: " + currentScore, (WIDTH/3) - (WIDTH/15), HEIGHT - HEIGHT*(9/10), paint);
+
+        if(!player.getPlaying() && newGameCreated&&reset) {
             Paint paint1 = new Paint();
             paint1.setTextSize(WIDTH / 90);
             paint1.setColor(Color.RED);
             paint1.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
             float myWidth=paint1.measureText("PRESS TO START");
-            canvas.drawText("PRESS TO START", WIDTH/4 - (myWidth/2), HEIGHT / 3, paint1);
+            canvas.drawText("PRESS TO START", WIDTH / 4 - (myWidth / 2), HEIGHT / 3, paint1);
 
-            paint1.setTextSize(WIDTH / 90);
-            paint1.setColor(Color.RED);
+            myWidth=paint1.measureText("Press Right Side of Screen to Shoot");
+            canvas.drawText("Press Right Side of Screen to Shoot", WIDTH / 4 - (myWidth / 2), HEIGHT / 2 - (HEIGHT / 10), paint1);
+
             myWidth=paint1.measureText("Press Below Ship to Go Down");
-            canvas.drawText("Press Below Ship to Go Down", WIDTH/4 - (myWidth/2), HEIGHT / 2 + WIDTH/90, paint1);
+            canvas.drawText("Press Below Ship to Go Down", WIDTH / 4 - (myWidth / 2), HEIGHT / 2 + WIDTH / 90, paint1);
+
             myWidth=paint1.measureText("Press Above Ship to Go Up");
             canvas.drawText("Press Above Ship to Go Up", WIDTH/4 - (myWidth/2), HEIGHT / 2, paint1);
+
+            myWidth=paint1.measureText("Asteroids Don't Break");
+            canvas.drawText("Asteroids Don't Break", WIDTH/4 - (myWidth/2), HEIGHT / 2 +(HEIGHT/6), paint1);
+
+            myWidth=paint1.measureText("Your Ship Self-Destructs When You Leave");
+            canvas.drawText("Your Ship Self-Destructs When You Leave", WIDTH/4 - (myWidth/2), HEIGHT / 2 + (HEIGHT/4), paint1);
         }
     }
 }
