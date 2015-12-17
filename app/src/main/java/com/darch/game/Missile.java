@@ -41,6 +41,9 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
             image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
         }
 
+        height=height/5;
+        width=width/2;
+
         animation.setFrames(image);
         animation.setDelay(100-speed);
 
@@ -57,22 +60,6 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
     public void Draw(Canvas canvas)
     {
         canvas.drawBitmap(animation.getImage(), x, y, null);
-    }
-
-    @Override
-    public int getWidth()
-    {
-        //offset slightly for more realistic collision detection
-        x=width-10;
-        return width;
-    }
-
-    @Override
-    public int getHeight()
-    {
-        //offset slightly for more realistic collision detection
-        y=height-10;
-        return height;
     }
 
     public boolean collision(GameObject a, GameObject b)

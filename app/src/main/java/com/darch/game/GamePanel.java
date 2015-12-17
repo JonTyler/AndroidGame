@@ -188,7 +188,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             if (shotElapsed > 500)
             {
                 allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.single_frame_bullet)
-                        , player.getX()+(player.width/2)+16, player.getY()+(player.height/2)-16, 32, 32, player.getScore(), 1, true, player));
+                        , player.getX()+(player.width)+16, player.getY()+(player.height)-16, 32, 32, player.getScore(), 1, true, player));
 
                 playerShotStartTime = System.nanoTime();
             }

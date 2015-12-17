@@ -19,7 +19,7 @@ public class Player extends GameObject implements UpdateInterface, DrawableInter
     public Player(Bitmap res, int w, int h, int numFrames) {
 
         x = 100;
-        y = (GamePanel.HEIGHT / 2)-64;
+        y = (GamePanel.HEIGHT / 2)+64;
         dy = 0;
         score = 0;
         height = h;
@@ -32,6 +32,9 @@ public class Player extends GameObject implements UpdateInterface, DrawableInter
         {
             image[i] = Bitmap.createBitmap(spritesheet, 0, i*height, width, height);
         }
+
+        height=height-56;
+        width=width-28;
 
         animation.setFrames(image);
         animation.setDelay(1000);
@@ -74,19 +77,5 @@ public class Player extends GameObject implements UpdateInterface, DrawableInter
     public void setPlaying(boolean b){playing = b;}
     public void resetDY(){dy = 0;}
     public void resetScore(){score = 0;}
-    @Override
-    public int getWidth()
-    {
-        //offset slightly for more realistic collision detection
-        x=width-20;
-        return width;
-    }
-    @Override
-    public int getHeight()
-    {
-        //offset slightly for more realistic collision detection
-        y=height-20;
-        return height;
-    }
 }
 

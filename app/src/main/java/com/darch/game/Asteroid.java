@@ -40,6 +40,10 @@ public class Asteroid extends GameObject implements DrawableInterface, UpdateInt
             image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
         }
 
+
+        height=height-20;
+        width=width-20;
+
         animation.setFrames(image);
         animation.setDelay(100-speed);
 
@@ -53,20 +57,5 @@ public class Asteroid extends GameObject implements DrawableInterface, UpdateInt
     public void Draw(Canvas canvas)
     {
         canvas.drawBitmap(animation.getImage(), x, y, null);
-    }
-
-    @Override
-    public int getWidth()
-    {
-        //offset slightly for more realistic collision detection
-        x=width-20;
-        return width;
-    }
-    @Override
-    public int getHeight()
-    {
-        //offset slightly for more realistic collision detection
-        y=height-20;
-        return height;
     }
 }

@@ -38,6 +38,9 @@ public class otherFighter extends GameObject implements DrawableInterface, Updat
             image[i] = Bitmap.createBitmap(spritesheet, 0, i*height, width, height);
         }
 
+        height=height-56;
+        width=width-28;
+
         animation.setFrames(image);
         animation.setDelay(100-speed);
 
@@ -51,21 +54,5 @@ public class otherFighter extends GameObject implements DrawableInterface, Updat
     public void Draw(Canvas canvas)
     {
         canvas.drawBitmap(animation.getImage(), x, y, null);
-    }
-
-    @Override
-    public int getWidth()
-    {
-        //offset slightly for more realistic collision detection
-        x=width-20;
-        return width;
-    }
-
-    @Override
-    public int getHeight()
-    {
-        //offset slightly for more realistic collision detection
-        y=height-20;
-        return height;
     }
 }
