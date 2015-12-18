@@ -6,7 +6,9 @@ import android.graphics.Rect;
 
 import java.util.Random;
 /**
- * Created by Jon on 2015-12-04.
+ * Missile.java
+ * Superclass for all bullet objects.
+ * Revision HIstory: Created by Jon on 2015-12-04.
  */
 public class Missile extends GameObject implements UpdateInterface, DrawableInterface, CollisionInterface{
     private int score;

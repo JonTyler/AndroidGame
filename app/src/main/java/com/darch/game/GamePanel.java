@@ -1,3 +1,9 @@
+/*
+GamePanel.java
+This panel holds all rendered game objects.
+
+        Revision History: 11/26/2015: Ryan Darch: Created
+ */
 package com.darch.game;
 
         import android.annotation.SuppressLint;
@@ -138,6 +144,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         thread.start();
 
     }
+    //player controls
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -196,7 +203,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         //return false;
         return super.onTouchEvent(event);
     }
-
+    //firebase set method
     public void addScoreToFireBase()
     {
         Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
@@ -214,6 +221,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         previousScore = score;
         getFireBaseHighScore();
     }
+    //firebase get method
     public void getFireBaseHighScore()
     {
         Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/Players");
@@ -246,6 +254,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             }
         });
     }
+    //increments the game by one frame
     public void update()
     {
         if(player.getPlaying()) {
@@ -432,6 +441,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
     @SuppressLint("MissingSuperCall")
     @Override
+    //draws all drawable things
     public void draw(Canvas canvas)
     {
         final float scaleFactorX = getWidth()/(WIDTH*1.f);
@@ -473,7 +483,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             canvas.restoreToCount(savedState);
         }
     }
-
+    //sets all variables
     public void newGame()
     {
         dissapear = false;
@@ -486,7 +496,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         player.setY(HEIGHT/2);
         newGameCreated = true;
     }
-
+    //draws text on the screen for the high score etc.
     public void drawText(Canvas canvas)
     {
         Paint paint = new Paint();

@@ -1,3 +1,10 @@
+/*
+Game.java
+The main class that displays the game.
+
+Revision History:
+            2015-11-21: Ryan Darch: Created
+ */
 package com.darch.game;
 
 import android.app.Activity;

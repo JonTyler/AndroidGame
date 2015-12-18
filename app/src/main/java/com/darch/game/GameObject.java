@@ -3,7 +3,10 @@ package com.darch.game;
 import android.graphics.Rect;
 
 /**
- * Created by Ryan on 11/26/2015.
+ * GameObject.java
+ * The abstract class from which everything other htan the background is derived in the game
+ *
+ * Revision History: Created by Ryan on 11/26/2015.
  */
 public abstract class GameObject {
     protected int x;
