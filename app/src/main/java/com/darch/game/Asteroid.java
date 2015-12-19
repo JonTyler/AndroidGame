@@ -45,7 +45,6 @@ public class Asteroid extends GameObject implements DrawableInterface, UpdateInt
         width=width-20;
 
         animation.setFrames(image);
-        animation.setDelay(100-speed);
 
     }
     public void Update()

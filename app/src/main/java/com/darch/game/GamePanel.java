@@ -291,7 +291,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if(allStraightBullets.get(i).getX()<-100 || allStraightBullets.get(i).getX()> dpWidth)
                 {
                     allStraightBullets.remove(i);
-                    break;
                 }
             }
 
@@ -332,7 +331,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     soundPool.play(2, 100, 100, 1, 0, 1f);
                     gameMusic.reset();
                     addScoreToFireBase();
-                    break;
                 }
             }
             long fighterBulletElapsed = (System.nanoTime()-fighterFireDelayTime)/1000000;
@@ -372,7 +370,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     gameMusic.reset();
                     soundPool.play(1, 100, 100, 1, 0, 1f);
                     addScoreToFireBase();
-                    break;
                 }
             }
             //this is outside the entire fighter for loop. god help me.
@@ -391,13 +388,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     gameMusic.reset();
                     soundPool.play(1, 100, 100, 1, 0, 1f);
                     addScoreToFireBase();
-                    break;
                 }
                 //remove Asteroid if it is way off the screen
                 if(asteroids.get(i).getX()<-100)
                 {
                     asteroids.remove(i);
-                    break;
                 }
             }
 
