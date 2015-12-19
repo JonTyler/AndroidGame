@@ -30,7 +30,7 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
         width = w;
         isFriendly = friendly;
 
-        speed = 7 + (int) (rand.nextDouble()*score/30);
+        speed = 7 + score/30;
 
         //cap missile speed
         if(speed>40)speed = 40;
@@ -47,7 +47,6 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
         width=width/2;
 
         animation.setFrames(image);
-        animation.setDelay(100-speed);
 
     }
     public Missile() {
@@ -55,7 +54,7 @@ public class Missile extends GameObject implements UpdateInterface, DrawableInte
     }
     public void Update()
     {
-        x+=speed;
+        x-=speed;
         animation.update();
     }
 

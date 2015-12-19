@@ -33,7 +33,7 @@ public class Player extends GameObject implements UpdateInterface, DrawableInter
             image[i] = Bitmap.createBitmap(spritesheet, 0, i*height, width, height);
         }
 
-        height=height-56;
+        height=height-50;
         width=width-28;
 
         animation.setFrames(image);

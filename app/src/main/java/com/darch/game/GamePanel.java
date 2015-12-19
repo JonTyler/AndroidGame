@@ -17,7 +17,9 @@ package com.darch.game;
         import android.graphics.Rect;
         import android.graphics.Typeface;
         import android.graphics.drawable.Drawable;
+        import android.media.AudioManager;
         import android.media.MediaPlayer;
+        import android.media.SoundPool;
         import android.provider.MediaStore;
         import android.util.DisplayMetrics;
         import android.util.Log;
@@ -84,14 +86,20 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private String currentScore;
 
     public MediaPlayer gameMusic;
-    public MediaPlayer expolosionSound;
+    private static SoundPool soundPool;
+    private static HashMap soundPoolMap;
+    public static final int S1 = R.raw.explosion_5;
+    public static final int S2 = R.raw.lazer_ricochet;
 
     public GamePanel(Context context)
     {
         super(context);
 
         gameMusic = MediaPlayer.create(context, R.raw.human_music);
-        expolosionSound = MediaPlayer.create(context, R.raw.explosion_5);
+        soundPool = new SoundPool(3, AudioManager.STREAM_MUSIC, 100);
+        soundPoolMap = new HashMap(2);
+        soundPoolMap.put( S1, soundPool.load(context, R.raw.explosion_5, 1) );
+        soundPoolMap.put( S2, soundPool.load(context, R.raw.lazer_ricochet, 2) );
         //add the callback to the surfaceholder to intercept events
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
@@ -197,6 +205,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.single_frame_bullet)
                         , player.getX()+(player.width)+16, player.getY()+(player.height)-16, 32, 32, player.getScore(), 1, true, player));
 
+                soundPool.play(2, 100, 100, 1, 0, 1f);
                 playerShotStartTime = System.nanoTime();
             }
         }
@@ -225,7 +234,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     public void getFireBaseHighScore()
     {
         Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/Players");
-        Query joryQueer = joryRef.orderByChild("High Score").limitToLast(1);
+        Query joryQueer = joryRef.orderByChild("High Score").limitToLast(2);
         joryQueer.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
@@ -291,7 +300,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             if(fighterElapsed > 2000)
             {
                 fighters.add(new otherFighter(BitmapFactory.decodeResource(getResources(),R.drawable.strip_fighter),
-                            WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),128,128, player.getScore(),1));
+                        (int)dpWidth+128, (int)(rand.nextDouble()*(HEIGHT)),128,128, player.getScore(),1));
                 //reset timer
                 fighterStartTime = System.nanoTime();
             }
@@ -303,13 +312,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if(asteroids.size()==0)
                 {
                     asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(), R.drawable.strip_rock_type_a)
-                            , WIDTH + 10, HEIGHT / 2, 64, 64, player.getScore(), 1));
-                    rotate(asteroids,90);
+                            ,(int)dpWidth+64, HEIGHT / 2, 64, 64, player.getScore(), 1));
+                    rotate(asteroids, 90);
                 }
                 else
                 {
                     asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(),R.drawable.strip_rock_type_a),
-                            WIDTH+10, (int)(rand.nextDouble()*(HEIGHT)),64,64, player.getScore(),1));
+                            (int)dpWidth+64, (int)(rand.nextDouble()*(HEIGHT)),64,64, player.getScore(),1));
                 }
                 //reset timer
                 asteroidStartTime = System.nanoTime();
@@ -320,9 +329,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if (collision(allStraightBullets.get(i), player) && !allStraightBullets.get(i).isFriendly) {
                     allStraightBullets.remove(i);
                     player.setPlaying(false);
-                    expolosionSound.reset();
-                    expolosionSound = MediaPlayer.create(this.getContext(), R.raw.explosion_4);
-                    expolosionSound.start();
+                    soundPool.play(2, 100, 100, 1, 0, 1f);
                     gameMusic.reset();
                     addScoreToFireBase();
                     break;
@@ -341,6 +348,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 {
                     allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
                             , fighters.get(i).getX()-64+16, fighters.get(i).getY()-16+64, 32, 32, player.getScore(), 1, false, player));
+
+                    soundPool.play(1, 100, 100, 1, 0, 1f);
                 }
 
                 for(int j = 0; j<allStraightBullets.size();j++)
@@ -349,12 +358,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                         allStraightBullets.remove(j);
                         explosion = new Explosion(BitmapFactory.decodeResource(getResources(), R.drawable.exp_type_a), fighters.get(i).getX() -64,
                                 fighters.get(i).getY() - 64, 128, 128, 40);
-                        expolosionSound.reset();
-                        expolosionSound = MediaPlayer.create(this.getContext(), R.raw.explosion_5);
-                        expolosionSound.start();
+                        soundPool.play(1, 100, 100, 1, 0, 1f);
                         fighters.remove(i);
                     }
                     explosion.Update();
+                }
+                if(fighters.get(i).getX()<-100)
+                {
+                    fighters.remove(i);
+                }
+                if(collision(fighters.get(i),player)) {
+                    player.setPlaying(false);
+                    gameMusic.reset();
+                    soundPool.play(1, 100, 100, 1, 0, 1f);
+                    addScoreToFireBase();
+                    break;
                 }
             }
             //this is outside the entire fighter for loop. god help me.
@@ -371,9 +389,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 if(collision(asteroids.get(i),player)) {
                     player.setPlaying(false);
                     gameMusic.reset();
-                    expolosionSound.reset();
-                    expolosionSound = MediaPlayer.create(this.getContext(), R.raw.explosion_5);
-                    expolosionSound.start();
+                    soundPool.play(1, 100, 100, 1, 0, 1f);
                     addScoreToFireBase();
                     break;
                 }

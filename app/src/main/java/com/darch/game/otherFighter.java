@@ -38,11 +38,10 @@ public class otherFighter extends GameObject implements DrawableInterface, Updat
             image[i] = Bitmap.createBitmap(spritesheet, 0, i*height, width, height);
         }
 
-        height=height-56;
-        width=width-28;
+        height=height-50;
+        width=width-22;
 
         animation.setFrames(image);
-        animation.setDelay(100-speed);
 
     }
     public void Update()

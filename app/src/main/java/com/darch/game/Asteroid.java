@@ -30,7 +30,7 @@ public class Asteroid extends GameObject implements DrawableInterface, UpdateInt
         speed = 7 + (int) (rand.nextDouble()*score/30);
 
         //cap missile speed
-        if(speed>40)speed = 40;
+        if(speed>60)speed = 60;
 
         Bitmap[] image = new Bitmap[numFrames];
         spritesheet = res;
