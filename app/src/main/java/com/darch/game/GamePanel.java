@@ -312,7 +312,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                 {
                     asteroids.add(new Asteroid(BitmapFactory.decodeResource(getResources(), R.drawable.strip_rock_type_a)
                             ,(int)dpWidth+64, HEIGHT / 2, 64, 64, player.getScore(), 1));
-                    rotate(asteroids, 90);
                 }
                 else
                 {
