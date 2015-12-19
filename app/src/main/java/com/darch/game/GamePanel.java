@@ -82,8 +82,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private boolean dissapear;
     private boolean started;
 
-    private String previousScore;
-    private String currentScore;
+    private Integer previousScore;
+    private Integer currentScore;
 
     public MediaPlayer gameMusic;
     private static SoundPool soundPool;
@@ -143,8 +143,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         smokeStartTime = System.nanoTime();
         asteroidStartTime = System.nanoTime();
         allStraightBullets = new ArrayList<StraightawayBoolet>();
-        previousScore = "0";
-        currentScore = "0";
+        previousScore = 0;
+        currentScore = 0;
 
         thread = new MainThread(getHolder(), this);
         //we can safely start the game loop
@@ -217,17 +217,17 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     {
         Firebase joryRef = new Firebase("https://jory-impulse.firebaseio.com/");
         Firebase playerRef = joryRef.child("Players");
-        Map<String, String> highScorePost = new HashMap<String, String>();
-        highScorePost.put("Name", "Testing");
-        String score = Integer.toString(player.getScore());
+        Map<String, Integer> highScorePost = new HashMap<String, Integer>();
+        highScorePost.put("Name", 0);
+        Integer score = player.getScore();
         highScorePost.put("High Score", score);
         playerRef.push().setValue(highScorePost);
-        previousScore = score;
-        if(Integer.parseInt(previousScore)>Integer.parseInt(currentScore))
+        previousScore = player.getScore();
+        if((previousScore)>(currentScore))
         {
             currentScore = previousScore;
         }
-        previousScore = score;
+        previousScore = player.getScore();
         getFireBaseHighScore();
     }
     //firebase get method
@@ -239,7 +239,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
                 Highscore = String.valueOf(dataSnapshot.getValue());
-                Highscore = Highscore.substring(26, Highscore.length()-1);
+                Highscore = Highscore.substring(20, Highscore.length() - 1);
             }
 
             @Override
