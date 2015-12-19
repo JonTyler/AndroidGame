@@ -349,7 +349,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
                     allStraightBullets.add(new StraightawayBoolet(BitmapFactory.decodeResource(getResources(), R.drawable.bullet_strip)
                             , fighters.get(i).getX()-64+16, fighters.get(i).getY()-16+64, 32, 32, player.getScore(), 1, false, player));
 
-                    soundPool.play(1, 100, 100, 1, 0, 1f);
+                    soundPool.play(2, 100, 100, 1, 0, 1f);
                 }
 
                 for(int j = 0; j<allStraightBullets.size();j++)
